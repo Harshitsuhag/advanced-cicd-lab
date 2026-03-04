@@ -1,0 +1,8 @@
+{
+  "name": "advanced-cicd-lab",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo Running Tests && exit 0",
+    "build": "echo Building Project"
+  }
+}
