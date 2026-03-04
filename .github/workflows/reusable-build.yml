@@ -1,7 +1,7 @@
 name: Reusable Build Workflow
 
 on:
-  workflow_call:   # 👈 This makes it reusable
+  workflow_call:
     inputs:
       node-version:
         required: true
@@ -11,6 +11,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node: [16, 18, 20]   # 👈 Matrix defined here
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -18,18 +22,18 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ inputs.node-version }}
+          node-version: ${{ matrix.node }}
 
       - name: Install Dependencies
         run: npm install
 
       - name: Build Project
         run: |
-          mkdir dist
-          echo "Build successful from reusable workflow" > dist/output.txt
+          mkdir -p dist
+          echo "Build successful on Node ${{ matrix.node }}" > dist/output-${{ matrix.node }}.txt
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifact
+          name: build-artifact-${{ matrix.node }}
           path: dist/

@@ -12,35 +12,39 @@ jobs:
 
   call-build:
     uses: ./.github/workflows/reusable-build.yml
-    with:
-      node-version: 18
 
   test:
     runs-on: ubuntu-latest
     needs: call-build
 
+    strategy:
+      matrix:
+        node: [16, 18, 20]
+
     steps:
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
-          name: build-artifact
+          name: build-artifact-${{ matrix.node }}
           path: dist/
 
       - name: Show Artifact
-        run: cat dist/output.txt
+        run: |
+          echo "Testing Node ${{ matrix.node }}"
+          cat dist/output-${{ matrix.node }}.txt
 
       - name: Run Tests
-        run: echo "Tests Passed"
+        run: echo "Tests Passed on Node ${{ matrix.node }}"
 
   package:
     runs-on: ubuntu-latest
     needs: test
 
     steps:
-      - name: Download Artifact
+      - name: Download Node 18 Artifact (Production Version)
         uses: actions/download-artifact@v4
         with:
-          name: build-artifact
+          name: build-artifact-18
           path: dist/
 
       - name: Create Package
@@ -73,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy-staging
     environment:
-      name: production   # 👈 This triggers approval
+      name: production
 
     steps:
       - name: Download Package
@@ -94,7 +98,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # Required for tags
+          fetch-depth: 0
 
       - name: Get Latest Tag
         id: get_tag
