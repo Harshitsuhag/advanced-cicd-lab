@@ -1,0 +1,35 @@
+name: Reusable Build Workflow
+
+on:
+  workflow_call:   # 👈 This makes it reusable
+    inputs:
+      node-version:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Project
+        run: |
+          mkdir dist
+          echo "Build successful from reusable workflow" > dist/output.txt
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: dist/
