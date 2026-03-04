@@ -2,10 +2,6 @@ name: Reusable Build Workflow
 
 on:
   workflow_call:
-    inputs:
-      node-version:
-        required: true
-        type: string
 
 jobs:
   build:
@@ -13,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        node: [16, 18, 20]   # 👈 Matrix defined here
+        node: [16, 18, 20]
 
     steps:
       - name: Checkout Code
