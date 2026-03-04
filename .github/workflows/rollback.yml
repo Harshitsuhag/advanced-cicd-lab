@@ -1,0 +1,30 @@
+name: Rollback Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Enter version to rollback to (example: v1.0.1)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+
+    steps:
+      - name: Print Selected Version
+        run: echo "Rolling back to version ${{ github.event.inputs.version }}"
+
+      - name: Simulate Downloading Release
+        run: |
+          echo "Downloading release ${{ github.event.inputs.version }}"
+          echo "Deploying ${{ github.event.inputs.version }} to Production..."
+
+      - name: Confirm Rollback
+        run: echo "Rollback Successful"
