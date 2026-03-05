@@ -6,23 +6,33 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Building application..."
-                sh 'echo Build complete > output.txt'
+                bat 'echo Build complete > output.txt'
             }
         }
 
         stage('Test') {
             steps {
                 echo "Running tests..."
-                sh 'echo Tests passed'
+                bat 'echo Tests passed'
             }
         }
 
         stage('Package') {
             steps {
                 echo "Packaging application..."
-                sh 'tar -czf app.tar.gz output.txt'
+                bat 'copy output.txt app.txt'
+                archiveArtifacts artifacts: 'app.txt'
             }
         }
 
+    }
+
+    post {
+        success {
+            echo "Pipeline successful"
+        }
+        failure {
+            echo "Pipeline failed"
+        }
     }
 }
